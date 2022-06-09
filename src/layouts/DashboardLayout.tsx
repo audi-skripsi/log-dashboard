@@ -1,10 +1,35 @@
-import { Box, Container, Heading, Text } from "@chakra-ui/react";
-import React from "react";
+import { Box, Container, Heading, Text, useToast } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
+import { isBaseError, MicroserviceName } from "../services/apis/external-types";
+import LambdaAPI from "../services/apis/LambdaAPI";
 
 type Props = {};
 
 const DashboardLayout = (props: Props) => {
+  const toast = useToast();
+
+  const [microservicesData, setMicroservicesData] = useState<
+    MicroserviceName[]
+  >([]);
+
+  useEffect(() => {
+    (async () => {
+      const resp = await LambdaAPI.getMicroservicesName();
+      if (isBaseError(resp)) {
+        toast({
+          title: `${resp.code} Error`,
+          description: resp.message,
+          variant: "solid",
+          status: "error",
+          position: "bottom-end",
+        });
+        return;
+      }
+      setMicroservicesData(resp.microservices);
+    })();
+  }, []);
+
   return (
     <Box>
       <Box position="fixed" display="flex" w="full" h="full" top={0} left={0}>
