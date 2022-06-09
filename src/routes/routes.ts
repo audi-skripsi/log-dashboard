@@ -1,7 +1,7 @@
 import React from "react";
-import Analytics from "../pages/Analytics";
 import Dashboard from "../pages/Dashboard";
 import Home from "../pages/Home";
+import Microservice from "../pages/Microservice";
 import Ping from "../pages/Ping";
 
 interface Route {
@@ -30,9 +30,9 @@ export const dashboardRoutes: Route[] = [
     title: "Dashboard",
   },
   {
-    path: "analytics",
-    component: Analytics,
+    path: ":microserviceId",
+    component: Microservice,
     index: true,
-    title: "Analytics",
+    title: "Microservice",
   },
 ];

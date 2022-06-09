@@ -1,5 +1,13 @@
-import { Box, Container, Heading, Text, useToast } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Container,
+  Heading,
+  Text,
+  useToast,
+} from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { isBaseError, MicroserviceName } from "../services/apis/external-types";
 import LambdaAPI from "../services/apis/LambdaAPI";
@@ -33,9 +41,24 @@ const DashboardLayout = (props: Props) => {
   return (
     <Box>
       <Box position="fixed" display="flex" w="full" h="full" top={0} left={0}>
-        <Box w="sm" textColor="white" textAlign="center" bgColor="#161c26">
-          <Box mt="1">
+        <Box w="sm" textAlign="center" bgColor="#161c26">
+          <Box mt="1" textColor="white">
             <Heading as="h2">Dashboard</Heading>
+          </Box>
+          <Box mt="5">
+            {microservicesData.map((microservice, key) => (
+              <Button
+                variant="solid"
+                colorScheme="blackAlpha"
+                w="full"
+                borderRadius="none"
+                py="6"
+                as={Link}
+                to={`/dashboard/${microservice.id}`}
+              >
+                {microservice.name}
+              </Button>
+            ))}
           </Box>
         </Box>
         <Box

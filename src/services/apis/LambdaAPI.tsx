@@ -4,6 +4,7 @@ import {
   BaseResponse,
   GetMicroserviceNameResponse,
   BaseError,
+  GetMicroserviceAnalyticsResponse,
 } from "./external-types";
 
 const axios = new Axios({
@@ -20,6 +21,30 @@ const LambdaAPI = {
       const resp = JSON.parse(
         response.data
       ) as BaseResponse<GetMicroserviceNameResponse>;
+      return resp.data;
+    } catch (e) {
+      console.error(e);
+      const errResp = e as AxiosError;
+      if (!errResp.response?.data) {
+        return {
+          code: 500,
+          message: `${e}`,
+        };
+      }
+
+      return errResp.response!.data as BaseError;
+    }
+  },
+
+  getMicroservicesAnalytics: async (
+    id: string
+  ): Promise<GetMicroserviceAnalyticsResponse | BaseError> => {
+    try {
+      const response = await axios.get(`/v1/microservice/${id}/analytics`);
+
+      const resp = JSON.parse(
+        response.data
+      ) as BaseResponse<GetMicroserviceAnalyticsResponse>;
       return resp.data;
     } catch (e) {
       console.error(e);

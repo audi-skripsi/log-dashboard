@@ -17,6 +17,18 @@ export interface GetMicroserviceNameResponse {
   microservices: MicroserviceName[];
 }
 
+export interface MicroserviceDataCount {
+  totalEventData: number;
+  totalInfoEventData: number;
+  totalWarnEventData: number;
+  totalErrorEventData: number;
+  totalUnknownEventData: number;
+}
+
+export interface GetMicroserviceAnalyticsResponse {
+  eventDataCount: MicroserviceDataCount;
+}
+
 export const isBaseError = (data: any): data is BaseError => {
   if (data.code && data.message) {
     return true;
