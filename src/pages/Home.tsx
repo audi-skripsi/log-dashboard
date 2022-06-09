@@ -26,7 +26,6 @@ const Home = (props: Props) => {
         <Button colorScheme="facebook" mt="2rem" as={Link} to="/dashboard">
           Start
         </Button>
-        <Link to="/dashboard">click me</Link>
       </Box>
     </Box>
   );
