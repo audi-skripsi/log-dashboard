@@ -40,8 +40,16 @@ const DashboardLayout = (props: Props) => {
 
   return (
     <Box>
-      <Box position="fixed" display="flex" w="full" h="full" top={0} left={0}>
-        <Box w="sm" textAlign="center" bgColor="#161c26">
+      <Box
+        position="fixed"
+        display="flex"
+        w="full"
+        h="full"
+        top={0}
+        left={0}
+        pointerEvents="none"
+      >
+        <Box w="sm" textAlign="center" bgColor="#161c26" pointerEvents="all">
           <Box mt="1" textColor="white">
             <Heading as="h2">Dashboard</Heading>
           </Box>
@@ -69,6 +77,7 @@ const DashboardLayout = (props: Props) => {
           w="full"
           h="fit-content"
           zIndex={100}
+          pointerEvents="all"
         >
           <Box>
             <Heading as="h2" size="lg" ml="8">
