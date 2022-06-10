@@ -1,12 +1,14 @@
 import {
   Box,
   Button,
+  ButtonGroup,
   Heading,
   Input,
   InputGroup,
   InputLeftElement,
   Select,
   SimpleGrid,
+  Text,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -32,8 +34,23 @@ const Microservice = (props: Props) => {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
 
-  const [eventData, setEventData] = useState<EventData[]>([]);
+  const [eventData, setEventData] = useState<EventData[][]>([]);
   const [totalEvents, setTotalEvents] = useState(0);
+
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const handleNextPage = (e: any) => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = (e: any) => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   useEffect(() => {
     (async () => {
@@ -44,6 +61,9 @@ const Microservice = (props: Props) => {
       }
       setMicroserviceDataCount(resp.eventDataCount);
     })();
+    setTotalEvents(0);
+    setCurrentPage(0);
+    setEventData([]);
   }, [microserviceId]);
 
   const handleMessage = (e: any) => {
@@ -82,7 +102,22 @@ const Microservice = (props: Props) => {
         console.error();
         return;
       }
-      setEventData(resp.events);
+      const pagedData: EventData[][] = [[]];
+      let iterator = 0;
+      let eventPerPage = 20;
+      let currentPage = 0;
+      resp.events.map((eventData) => {
+        if (iterator == eventPerPage) {
+          currentPage++;
+          pagedData[currentPage] = [];
+          iterator = 0;
+        }
+        pagedData[currentPage].push(eventData);
+        iterator++;
+      });
+
+      setEventData(pagedData);
+      setTotalPages(currentPage);
       setTotalEvents(resp.totalEventData);
     })();
   };
@@ -158,9 +193,19 @@ const Microservice = (props: Props) => {
           />
           <Button onClick={handleSearch}>Search</Button>
         </Box>
-        <Box height="64" overflowY="scroll">
-          {eventData &&
-            eventData.map((val, i) => (
+        <Box mt="4">
+          {totalEvents !== 0 && <Text>{totalEvents} Event Data ditemukan</Text>}
+        </Box>
+        <Box
+          mt="4"
+          height="2xl"
+          overflowY="scroll"
+          display="flex"
+          flexDir="column"
+          gap={2}
+        >
+          {eventData[currentPage] &&
+            eventData[currentPage].map((val, i) => (
               <EventCard
                 key={i}
                 level={val.level}
@@ -169,6 +214,13 @@ const Microservice = (props: Props) => {
                 timetamp={val.timestamp}
               />
             ))}
+        </Box>
+        <Box mt="4" mb="12">
+          <ButtonGroup size="md" isAttached variant="solid">
+            <Button onClick={handlePrevPage}>{"<"}</Button>
+            <Button>{currentPage + 1}</Button>
+            <Button onClick={handleNextPage}>{">"}</Button>
+          </ButtonGroup>
         </Box>
       </Box>
     </Box>

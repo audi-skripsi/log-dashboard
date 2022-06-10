@@ -10,10 +10,13 @@ interface Props {
 
 const EventCard = ({ level, message, serviceName, timetamp }: Props) => {
   return (
-    <Box>
-      <Heading size="lg">{level}</Heading>
-      <Text>{message}</Text>
-      <Text>{serviceName}</Text>
+    <Box borderBottom="1px" borderColor="gray">
+      <Heading size="md">{level}</Heading>
+      <Text color="gray.700">{message}</Text>
+      <Text color="gray.700" fontWeight="bold">
+        {serviceName}
+      </Text>
+      <Text>{new Date(timetamp * 1000).toString()}</Text>
     </Box>
   );
 };
