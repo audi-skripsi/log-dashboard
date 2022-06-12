@@ -6,11 +6,12 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { isBaseError, MicroserviceName } from "../services/apis/external-types";
 import LambdaAPI from "../services/apis/LambdaAPI";
+import { MicroserviceDataContext } from "../services/providers/MicroserviceDataProvider";
 
 type Props = {};
 
@@ -20,6 +21,9 @@ const DashboardLayout = (props: Props) => {
   const [microservicesData, setMicroservicesData] = useState<
     MicroserviceName[]
   >([]);
+  const [currentMicroservice, setCurrentMicroservice] = useState<string>("");
+
+  const microserviceData = useContext(MicroserviceDataContext);
 
   useEffect(() => {
     (async () => {
@@ -37,6 +41,13 @@ const DashboardLayout = (props: Props) => {
       setMicroservicesData(resp.microservices);
     })();
   }, []);
+
+  useEffect(() => {
+    if (microserviceData == null) {
+      return;
+    }
+    setCurrentMicroservice(microserviceData.microserviceName);
+  }, [microserviceData]);
 
   return (
     <Box>
@@ -81,7 +92,7 @@ const DashboardLayout = (props: Props) => {
         >
           <Box>
             <Heading as="h2" size="lg" ml="8">
-              Sub Bab
+              {microserviceData?.microserviceName}
             </Heading>
           </Box>
         </Box>

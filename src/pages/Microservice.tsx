@@ -10,7 +10,7 @@ import {
   SimpleGrid,
   Text,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import AnalyticsCard from "../components/AnalyticsCard";
 import {
@@ -21,8 +21,42 @@ import {
 import LambdaAPI from "../services/apis/LambdaAPI";
 import { AiOutlineSearch } from "react-icons/ai";
 import EventCard from "../components/EventCard";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Bar } from "react-chartjs-2";
+import { MicroserviceDataContext } from "../services/providers/MicroserviceDataProvider";
 
 type Props = {};
+
+const barChartOptions = {
+  responsive: true,
+  plugins: {
+    legend: {
+      display: false,
+      position: "top" as const,
+    },
+    title: {
+      display: false,
+      text: "Jenis Event Data",
+    },
+  },
+};
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const Microservice = (props: Props) => {
   const { microserviceId } = useParams();
@@ -39,6 +73,7 @@ const Microservice = (props: Props) => {
 
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+  const microserviceData = useContext(MicroserviceDataContext);
 
   const handleNextPage = (e: any) => {
     if (currentPage < totalPages) {
@@ -64,6 +99,11 @@ const Microservice = (props: Props) => {
     setTotalEvents(0);
     setCurrentPage(0);
     setEventData([]);
+    if (microserviceData != null) {
+      const name = microserviceId?.split("_").join(" ");
+      microserviceData.setMicroserviceId(`${microserviceId}`);
+      microserviceData.setMicroserviceName(`${name}`);
+    }
   }, [microserviceId]);
 
   const handleMessage = (e: any) => {
@@ -106,15 +146,17 @@ const Microservice = (props: Props) => {
       let iterator = 0;
       let eventPerPage = 20;
       let currentPage = 0;
-      resp.events.map((eventData) => {
-        if (iterator == eventPerPage) {
-          currentPage++;
-          pagedData[currentPage] = [];
-          iterator = 0;
-        }
-        pagedData[currentPage].push(eventData);
-        iterator++;
-      });
+      if (resp.events != null) {
+        resp.events.map((eventData) => {
+          if (iterator == eventPerPage) {
+            currentPage++;
+            pagedData[currentPage] = [];
+            iterator = 0;
+          }
+          pagedData[currentPage].push(eventData);
+          iterator++;
+        });
+      }
 
       setEventData(pagedData);
       setTotalPages(currentPage);
@@ -148,6 +190,32 @@ const Microservice = (props: Props) => {
             value={microserviceDataCount?.totalUnknownEventData}
           />
         </SimpleGrid>
+      </Box>
+      <Box>
+        <Heading size="lg" mt="8">
+          Grafik
+        </Heading>
+        <Heading size="md" fontWeight="normal">
+          Grafik jenis Event Data
+        </Heading>
+        <Bar
+          options={barChartOptions}
+          data={{
+            labels: ["error", "warn", "info", "unknown"],
+            datasets: [
+              {
+                label: "nama microservice",
+                data: [
+                  microserviceDataCount?.totalErrorEventData,
+                  microserviceDataCount?.totalWarnEventData,
+                  microserviceDataCount?.totalInfoEventData,
+                  microserviceDataCount?.totalUnknownEventData,
+                ],
+                backgroundColor: "rgba(53, 162, 235, 0.5)",
+              },
+            ],
+          }}
+        />
       </Box>
       <Box>
         <Heading size="lg" mt="12">

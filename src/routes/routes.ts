@@ -33,6 +33,6 @@ export const dashboardRoutes: Route[] = [
     path: ":microserviceId",
     component: Microservice,
     index: true,
-    title: "Microservice",
+    title: "Microservice Data",
   },
 ];
