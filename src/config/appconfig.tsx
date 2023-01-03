@@ -1,9 +1,9 @@
 const DEV_CONFIG = {
-  BACKEND_URL: "http://localhost:8080",
+  BACKEND_URL: "http://localhost:8003",
 };
 
 const PROD_CONFIG = {
-  BACKEND_URL: "http://dashboard.skripsi.audipasuatmadi.com",
+  BACKEND_URL: "http://localhost:8003",
 };
 
 // const APP_CONFIG = DEV_CONFIG;
